@@ -326,6 +326,7 @@
   "SavedSettings": "{0:u}: Settings Saved.",
   "ScanToolCapabilities": "Scanning for tool capabilities.",
   "SelfManageGitCreds": "You are in self manage git creds mode. Make sure your agent host machine can bypass any git authentication challenge.",
+  "ServerTarpit": "VSTS Agent is tarpitting by server, you may experience delay on console line post, job status report and task log upload.",
   "ServerUrl": "server URL",
   "ServiceAlreadyExists": "The service already exists: {0}, it will be replaced",
   "ServiceConfigured": "Service {0} successfully configured",

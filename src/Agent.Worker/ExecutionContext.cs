@@ -58,6 +58,7 @@ namespace Microsoft.VisualStudio.Services.Agent.Worker
         private Guid _detailTimelineId;
         private int _childExecutionContextCount = 0;
         private CancellationTokenSource _cancellationTokenSource;
+        private bool _throttlingReported = false;
 
         public CancellationToken CancellationToken => _cancellationTokenSource.Token;
         public List<ServiceEndpoint> Endpoints { get; private set; }
@@ -304,6 +305,9 @@ namespace Microsoft.VisualStudio.Services.Agent.Worker
 
             // Initialize the verbosity (based on system.debug).
             WriteDebug = Variables.System_Debug ?? false;
+
+            // Hook up JobServerQueueThrottling event, we will log warning on server tarpit.
+            _jobServerQueue.JobServerQueueThrottling += JobServerQueueThrottling_EventReceived;
         }
 
         // Do not add a format string overload. In general, execution context messages are user facing and
@@ -373,6 +377,15 @@ namespace Microsoft.VisualStudio.Services.Agent.Worker
             _record.WorkerName = configuration.GetSettings().AgentName;
 
             _jobServerQueue.QueueTimelineRecordUpdate(_mainTimelineId, _record);
+        }
+
+        private void JobServerQueueThrottling_EventReceived(object sender, EventArgs data)
+        {
+            if (!_throttlingReported)
+            {
+                this.Warning(StringUtil.Loc("ServerTarpit"));
+                _throttlingReported = true;
+            }
         }
     }
 
